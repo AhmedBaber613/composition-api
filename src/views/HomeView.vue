@@ -1,32 +1,38 @@
 <template>
   <div class="home">
     <h1>Home</h1>
-    <PostList v-if="showPosts" :posts="posts" />
-    <button @click="showPosts = !showPosts">togglePosts</button>
-    <button @click="posts.pop()">delete posts</button>
+    <div v-if="error">{{ error }}</div>
+    <div v-if="posts.length">
+      <PostList :posts="posts" />
+    </div>
+    <div v-else>Loading...</div>
   </div>
 </template>
 
 
 <script>
-  import { ref } from 'vue'
-
   // component imports
   import PostList from '../components/PostList.vue'
+  import getPosts from '../composables/getPosts';
 
   export default {
     name: 'Home',
     components: { PostList },
-    setup() {  
-      const posts = ref([
-        { title: 'welcome to the blog', body: 'Lorem ipsum', id: 1 },
-        { title: 'top 5 CSS tips', body: 'lorem ipsum', id: 2 },
-      ])s
+    setup() {
+      getPosts()
+      const { posts, error, load } = getPosts()
 
-      const showPosts = ref(true)
-      
-      return { posts, showPosts }
+      load()
+
+      return { posts, error }
     },
   }
 </script>
-   
+
+<style>
+  .home {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+  }
+</style>
